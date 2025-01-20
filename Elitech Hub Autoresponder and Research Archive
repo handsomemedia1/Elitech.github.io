@@ -1,0 +1,199 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Search, MessageSquare, Send, FileText } from 'lucide-react';
+
+const ElitechHubApp = () => {
+  const [messages, setMessages] = useState([
+    { id: 1, text: "Welcome to Elitech Hub! How can I assist you today?", isBot: true }
+  ]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Sample research papers fetched from the documents
+  const researchPapers = [
+    {
+      id: 1,
+      title: "The Relationship Between Bullying Victimization, Bullying Attitudes and School Climate",
+      abstract: "Study investigating bullying dynamics, social relations and school climate among secondary school students in Afijo Local Government, Oyo State.",
+      author: "Ogbonna Lilian Oluchi",
+      date: "2024",
+      type: "B.Ed"
+    },
+    {
+      id: 2,
+      title: "Statistical Analysis of Factors Affecting Liver Cirrhosis Patient Survival",
+      abstract: "Comprehensive analysis of 25,000 liver cirrhosis patients examining survival rates, clinical parameters, and demographic factors.",
+      author: "Research Team",
+      date: "2024",
+      type: "Medical Research"
+    },
+    {
+      id: 3,
+      title: "Educational Research: A Comprehensive Overview",
+      abstract: "Analysis of educational research through ontological and epistemological perspectives, examining research paradigms and ethical considerations.",
+      author: "Academic Team",
+      date: "2024",
+      type: "Education"
+    },
+    {
+      id: 2,
+      title: "Socio-Cultural Factors as Predictors of Body Dissatisfaction",
+      abstract: "Research on body image among university students...",
+      author: "Sanni Foluke Deborah",
+      date: "2024"
+    },
+    {
+      id: 3,
+      title: "How Common is Denture Stomatitis in Older Adults with Dementia",
+      abstract: "Investigation of oral health in elderly populations...",
+      date: "2025"
+    }
+  ];
+
+  // Autoresponder logic with pricing information
+  const autoResponses = {
+    "price": "Here are our research pricing options:\n\nNCE full research (no AI/plagiarism): ₦40,000\nB.Sc/B.Ed full research (no AI/plagiarism): ₦80,000\nM.Sc/M.Ed full research (no AI/plagiarism): ₦150,000\nPhD full research (no AI/plagiarism): ₦250,000\n\nAll prices include:\n- Original research\n- Plagiarism-free content\n- Expert consultation\n- Free revisions\n- Complete documentation",
+    "samples": "I can show you samples of our previous research work. Please check our Research Archive tab for examples of our work in various fields including education, medical research, and social sciences.",
+    "methodology": "We specialize in various research methodologies including:\n- Quantitative research\n- Qualitative research\n- Mixed methods\n- Case studies\n- Experimental research\n- Survey research\nWe can recommend the best approach based on your topic.",
+    "start": "To get started with your research project:\n1. Share your topic/field\n2. Discuss requirements and timeline\n3. Get a detailed quote\n4. Make initial payment\n5. Begin research process\n\nWould you like to discuss your specific research needs?",
+    "quality": "We ensure high quality through:\n- Expert researchers\n- Thorough literature review\n- Original data collection\n- Professional analysis\n- Multiple quality checks\n- Plagiarism verification\n\nEvery project follows strict academic standards.",
+    "recommendation": "Based on your interest, I'd recommend checking our sample on ",
+    "cost": "Here are our research pricing options:\n\nNCE full research (no AI/plagiarism): ₦40,000\nB.Sc/B.Ed full research (no AI/plagiarism): ₦80,000\nM.Sc/M.Ed full research (no AI/plagiarism): ₦150,000\nPhD full research (no AI/plagiarism): ₦250,000",
+    "hello": "Hello! Welcome to Elitech Hub. How can I help you today?",
+    "services": "We offer comprehensive research services including:\n- Full research projects\n- Data analysis\n- Academic writing\n- Research consultation\n\nWould you like to know our pricing?",
+    "contact": "You can reach us through:\nEmail: contact@elitechhub.com\nPhone: (234) XXX-XXXX\nWhatsApp: (234) XXX-XXXX",
+    "timeline": "Research completion timelines vary by type:\nNCE: 2-3 weeks\nB.Sc/B.Ed: 3-4 weeks\nM.Sc/M.Ed: 4-6 weeks\nPhD: 8-12 weeks",
+    "process": "Our research process includes:\n1. Initial consultation\n2. Topic refinement\n3. Literature review\n4. Data collection & analysis\n5. Writing & editing\n6. Plagiarism check\n7. Final delivery",
+    "payment": "We accept various payment methods:\n- Bank transfer\n- Mobile money\n- Online payment\n\nA 50% deposit is required to begin work.",
+    "default": "Thank you for your message. How can I assist you with your research needs?"
+  };
+
+  const handleSendMessage = () => {
+    if (!inputMessage.trim()) return;
+
+    // Add user message
+    const newMessages = [...messages, { id: messages.length + 1, text: inputMessage, isBot: false }];
+
+    // Generate auto-response
+    const lowercaseInput = inputMessage.toLowerCase();
+    let response = autoResponses.default;
+    
+    Object.entries(autoResponses).forEach(([key, value]) => {
+      if (lowercaseInput.includes(key)) {
+        response = value;
+      }
+    });
+
+    // Add bot response
+    newMessages.push({ id: messages.length + 2, text: response, isBot: true });
+    
+    setMessages(newMessages);
+    setInputMessage("");
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto p-4 bg-white">
+      <Tabs defaultValue="chat" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="chat" className="bg-blue-700 text-white hover:bg-blue-800">Autoresponder</TabsTrigger>
+          <TabsTrigger value="research" className="bg-blue-600 text-white hover:bg-blue-700">Research Archive</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="chat">
+          <Card className="border-blue-500">
+            <CardHeader className="bg-blue-500 text-white">
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                Elitech Hub Chat
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-96 w-full pr-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+                    >
+                      <div
+                        className={`max-w-md p-4 rounded-lg ${
+                          message.isBot
+                            ? 'bg-blue-100 text-blue-900'
+                            : 'bg-blue-500 text-white'
+                        }`}
+                      >
+                        {message.text.split('\n').map((line, i) => (
+                          <p key={i} className="whitespace-pre-line">{line}</p>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              <div className="flex gap-2 mt-4">
+                <Input
+                  placeholder="Type your message..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  className="border-blue-300 focus:border-blue-500"
+                />
+                <Button onClick={handleSendMessage} className="bg-blue-500 hover:bg-blue-600">
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="research">
+          <Card className="border-blue-500">
+            <CardHeader className="bg-blue-500 text-white">
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Research Archive
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Input
+                placeholder="Search research papers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="mb-4 border-blue-300 focus:border-blue-500"
+              />
+              <ScrollArea className="h-96 w-full pr-4">
+                <div className="space-y-4">
+                  {researchPapers
+                    .filter(paper => 
+                      paper.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      paper.abstract.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((paper) => (
+                      <Card key={paper.id} className="border-blue-200 hover:border-blue-400">
+                        <CardHeader>
+                          <CardTitle className="text-lg text-blue-800">{paper.title}</CardTitle>
+                          <div className="text-sm text-blue-600">
+                            {paper.author && <div>Author: {paper.author}</div>}
+                            <div>Published: {paper.date}</div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-gray-600">{paper.abstract}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
+export default ElitechHubApp;
